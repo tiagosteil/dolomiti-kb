@@ -19,7 +19,7 @@ O certificado do Jornal Repercussão foi trocado em 2026-11-05. A senha nova foi
 A senha do PFX fica repetida em mais de um bloco do settings do suez. Trocar um lugar só deixa o outro com a senha antiga. E o erro não aparece na troca: o suez lê o PFX na subida, mas só testa a senha na primeira chamada, então o `pm2 restart` passa sem erro mesmo com a senha errada.
 
 ## Como foi resolvido
-A senha foi trocada nos dois lugares e o suez reiniciado. O procedimento de troca, com o `grep` e o teste do token, está em [proxy-reverso.md, §4](../proxy-reverso.md#trocar-o-certificado-do-sicoob). Na OCI, o nginx guarda cada senha num único arquivo ([ADR 0004](../decisoes/0004-nginx-no-lugar-de-node4ords-e-suez.md)).
+A senha foi trocada nos dois lugares e o suez reiniciado. Em 2026-11-10, o procedimento de troca virou o [runbook](../runbooks/trocar-certificado-sicoob.md), com o `grep` de todas as ocorrências e o teste do token. Na OCI, o nginx guarda cada senha num único arquivo ([ADR 0004](../decisoes/0004-nginx-no-lugar-de-node4ords-e-suez.md)).
 
 ## Sinais de alerta
 - `Status: 500` com `mac verify failure` na busca do token.

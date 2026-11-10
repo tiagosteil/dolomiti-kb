@@ -127,22 +127,7 @@ pm2 logs proxy-suez --lines 100
 
 ### Trocar o certificado do Sicoob
 
-1. Fazer backup do PFX e do `settings.json` atuais.
-2. Copiar o PFX novo para `/opt/suez/config/cert/`.
-3. Conferir se a senha abre o arquivo e anotar a validade:
-   ```bash
-   openssl pkcs12 -in novo.pfx -noout -info     # pede a senha
-   openssl pkcs12 -in novo.pfx -nokeys -clcerts | openssl x509 -noout -subject -enddate
-   ```
-4. Atualizar `pfxPath` e `passphrase` em **todas** as ocorrências. No JSON, `"` e `\` na senha precisam de escape.
-   ```bash
-   grep -n -e pfxPath -e passphrase /opt/suez/config/settings.json
-   ```
-5. Rodar `pm2 restart proxy-suez`.
-6. Buscar um token pelo banco (bloco abaixo). O esperado é `HTTP 200` com `access_token`, e só esse teste valida a senha.
-7. Registrar a nova validade no changelog.
-
-**Incidente de 2026-11-06.** O certificado do Jornal Repercussão foi trocado em 2026-11-05, e a senha nova foi colocada em só um dos dois lugares do settings. A busca do token passou a falhar com `ORA-20001 ... Erro HTTP ao buscar token Sicoob. Status: 500`, com `Error: mac verify failure` no corpo, e o erro apareceu para o cliente na tela de boletos. O problema foi resolvido trocando a senha nos dois lugares ([lição](licoes/2026-11-06-senha-do-pfx-em-todas-as-ocorrencias.md)).
+Procedimento em [runbooks/trocar-certificado-sicoob.md](runbooks/trocar-certificado-sicoob.md). O incidente de 2026-11-06, quando a senha nova ficou em só uma das ocorrências do settings, virou [lição](licoes/2026-11-06-senha-do-pfx-em-todas-as-ocorrencias.md).
 
 ### Simular a busca do token
 
@@ -329,6 +314,7 @@ Consultadas em 2026-11-06.
 
 ## Changelog
 
+- **2026-11-10 (3):** a troca do certificado do Sicoob (§4) passou para o [runbook](runbooks/trocar-certificado-sicoob.md).
 - **2026-11-10 (2):** o incidente de 2026-11-06 virou [lição](licoes/2026-11-06-senha-do-pfx-em-todas-as-ocorrencias.md).
 - **2026-11-10:** a direção do §6 virou o [ADR 0004](decisoes/0004-nginx-no-lugar-de-node4ords-e-suez.md).
 - **2026-11-06:** documento criado a partir de `app/proxy/Proxy_reverso_dolomiti.md` e dos arquivos da mesma pasta. Registrados o incidente da troca de certificado do Jornal Repercussão, o procedimento de troca e a direção de substituir node4ords e suez pelo nginx na OCI.

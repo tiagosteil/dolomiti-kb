@@ -45,7 +45,8 @@ ADRs em [decisoes/](decisoes/): o porquê de cada escolha, o que foi recusado e 
 | [0010](decisoes/0010-tf-sem-a-role-dba.md) | O TF nasce sem a role `DBA`; privilégios só diretos e conforme a necessidade | Aceita 2026-11-10 (Tiago) |
 
 ## Runbooks e lições
-- [runbooks/](runbooks/) — procedimentos repetíveis. Nenhum ainda.
+- [runbooks/](runbooks/) — procedimentos repetíveis:
+  - [trocar-certificado-sicoob.md](runbooks/trocar-certificado-sicoob.md) — troca do PFX do Sicoob no suez, enquanto a produção estiver na Locaweb
 - [licoes/_indice.md](licoes/_indice.md) — regras aprendidas na operação, carregadas em toda sessão do Claude Code.
 
 ## Como manter esta KB

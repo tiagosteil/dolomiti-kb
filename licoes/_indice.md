@@ -21,4 +21,4 @@ Passou do limite: consolidar lições parecidas, promover as maduras para o `CLA
 
 ## Integrações bancárias
 
-- **Ao trocar o PFX do Sicoob, atualizar a senha em todas as ocorrências do settings do suez e validar buscando um token pelo banco; `mac verify failure` = o PFX não abre com a senha, e o restart passa mesmo com a senha errada** — [lição](2026-11-06-senha-do-pfx-em-todas-as-ocorrencias.md) (2026-11-06)
+- **Trocar o PFX do Sicoob só pelo [runbook](../runbooks/trocar-certificado-sicoob.md)** — a senha fica em mais de uma ocorrência do settings do suez, e só a busca do token valida a troca — [lição](2026-11-06-senha-do-pfx-em-todas-as-ocorrencias.md) (2026-11-06, promovida em 2026-11-10)
