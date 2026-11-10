@@ -1,0 +1,27 @@
+# Segredos — nunca versionar
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+*.jks
+*.sso
+cwallet.*
+ewallet.*
+Wallet_*/
+wallet*.zip
+secrets/
+
+# Dumps e backups do banco
+*.dmp
+*.dump
+*.sql.gz
+backups/
+
+# Claude Code — estado local
+.claude/settings.local.json
+
+# Sistema
+.DS_Store
