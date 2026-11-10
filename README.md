@@ -23,6 +23,11 @@ Documentação viva do sistema (ERP **Oracle + APEX**, multitenant). Use este í
 ## Site
 - [site-institucional.md](site-institucional.md) — site público: estrutura, formulário de WhatsApp, publicação e pendências
 
+## Pastas fora desta KB
+Desde 2026-11-10 esta KB é o repositório `dolomiti-kb` no GitHub. Os caminhos `app/`, `site/` e `Infra/` citados nos documentos continuam na pasta `DolomiTI/` do Google Drive: fontes PL/SQL, patches, relatórios, exports, cópias do proxy e do site.
+
+`app/proxy/` e `Infra/` têm certificados e senhas em texto. Podem ser lidos, mas nenhum trecho com segredo entra neste repositório.
+
 ## Como manter esta KB
 - **Um assunto por arquivo**; mantenha os **títulos estáveis** (não renomear seções).
 - Decisões com **data absoluta** + um **changelog** curto no fim de cada módulo.
