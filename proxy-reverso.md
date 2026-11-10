@@ -1,7 +1,7 @@
 # Proxy reverso — Dolomiti
 
 > **Status:** em produção na VM da Locaweb (CentOS). Na migração para a OCI, o nginx assume os dois papéis (§6).
-> **Última atualização:** 2026-11-06
+> **Última atualização:** 2026-11-10
 > **Substitui:** as anotações em `DolomiTI/app/proxy/Proxy_reverso_dolomiti.md`, que não devem mais ser usadas para consulta.
 
 A produção usa dois apps Node como proxy reverso. O **node4ords** recebe o tráfego da internet e o entrega ao APEX/ORDS e aos arquivos estáticos. O **suez** recebe as chamadas que o banco faz para APIs externas e as repassa por HTTPS. No caso do Sicoob, ele também apresenta o certificado do cliente (mTLS).
@@ -244,7 +244,7 @@ end;
 
 ## 6. Migração para a OCI: nginx no lugar dos apps Node
 
-**Direção (2026-11-06):** na VM de aplicação da OCI, o nginx assume os papéis do node4ords e do suez. Os dois apps Node não migram.
+**Decisão (2026-11-06, [ADR 0004](decisoes/0004-nginx-no-lugar-de-node4ords-e-suez.md)):** na VM de aplicação da OCI, o nginx assume os papéis do node4ords e do suez. Os dois apps Node não migram.
 
 As imagens oficiais da Oracle (`database/free` e `database/ords`) não trazem nginx. O compose do projeto de referência, o [uc-local-apex-dev](https://www.united-codes.com/products/uc-local-apex-dev/docs/), sobe só o banco e o ORDS. O nginx aparece no [guia de HTTPS do projeto](https://www.united-codes.com/products/uc-local-apex-dev/docs/getting-started/expose-https-reverse-proxy/), instalado no host: ele termina o TLS com Let's Encrypt e repassa para o ORDS em `127.0.0.1:8181`. A instalação e a configuração do nginx ficam por nossa conta.
 
@@ -329,4 +329,5 @@ Consultadas em 2026-11-06.
 
 ## Changelog
 
+- **2026-11-10:** a direção do §6 virou o [ADR 0004](decisoes/0004-nginx-no-lugar-de-node4ords-e-suez.md).
 - **2026-11-06:** documento criado a partir de `app/proxy/Proxy_reverso_dolomiti.md` e dos arquivos da mesma pasta. Registrados o incidente da troca de certificado do Jornal Repercussão, o procedimento de troca e a direção de substituir node4ords e suez pelo nginx na OCI.

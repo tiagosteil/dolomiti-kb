@@ -4,7 +4,7 @@
 > **Última atualização:** 2026-11-10
 > **Parte de:** [analise-producao-oci-vm-docker.md](analise-producao-oci-vm-docker.md), §9
 
-Como levar o owner TF do XE 11.2.0.2 para o Oracle Free 26ai, com base no inventário da produção (2026-11-05) e na terceira rodada de consultas (2026-11-10). **Só o TF migra:** os owners `APEXREP` e `DOLOMITI` ficam para trás (decisão de Tiago, 2026-11-10).
+Como levar o owner TF do XE 11.2.0.2 para o Oracle Free 26ai, com base no inventário da produção (2026-11-05) e na terceira rodada de consultas (2026-11-10). **Só o TF migra:** os owners `APEXREP` e `DOLOMITI` ficam para trás ([ADR 0005](decisoes/0005-importar-so-o-owner-tf.md)).
 
 **Teste anterior no ATP.** Em 2026-02, o mesmo schema foi importado no ADB `DEVDOLOMITI`, que hoje roda a versão 23.26.4, da mesma família do Free. As anotações ficam em `Infra/OCI/` e confirmam o caminho deste documento: usuário criado antes do import, `EXECUTE` em `DBMS_CRYPTO` e `DBMS_SESSION` e o contexto `CTX` recriado depois. No ADB, o TF compilou com só três objetos inválidos, todos explicados na §7.
 
@@ -43,8 +43,8 @@ O próprio banco confirmou: no modo schema, o Data Pump leva só `RLS_CONTEXT`, 
 | Views `V$` | `SELECT` em ~620 views `V_$`. O código usa só `V$SESSION` e `V$PARAMETER` | Só `V_$SESSION` (§3, item 5) |
 | ACLs de rede | 5 ACLs com 17 concessões | Recriar com a sintaxe atual, sem a de SMTP (§5) |
 | Sinônimos públicos | 31 apontando para o TF. Um deles, `TF_FNC_EXTENSO`, aponta para objeto que não existe mais. Serviam a outros owners, como o `APEXREP` | Não recriar. Os relatórios citam `tf.` ou conectam com `current_schema = TF`. Se algo quebrar na homologação, recriar só o que faltar |
-| Owner `APEXREP` | 5 pacotes e 2 tabelas, criado para isolar o TF do Jasper | Os objetos ficam para trás (decisão de 2026-11-10). O usuário pode ser recriado vazio, só de leitura, para o JRI (§3, item 6) |
-| Owner `DOLOMITI` | 16 tabelas, 9 triggers e 1 procedure, sem dependência com o TF | Fica para trás (decisão de 2026-11-10) |
+| Owner `APEXREP` | 5 pacotes e 2 tabelas, criado para isolar o TF do Jasper | Os objetos ficam para trás ([ADR 0005](decisoes/0005-importar-so-o-owner-tf.md)). O usuário é recriado vazio, só de leitura, para o JRI ([ADR 0009](decisoes/0009-jri-le-pelo-apexrep-vazio-e-so-de-leitura.md)) |
+| Owner `DOLOMITI` | 16 tabelas, 9 triggers e 1 procedure, sem dependência com o TF | Fica para trás ([ADR 0005](decisoes/0005-importar-so-o-owner-tf.md)) |
 | Módulo REST | `os` (prefixo `/os/`), com um template, `itemos/:id`, publicado em 2025-09-17. O export está nos scripts do SQL Workshop (`ORDS_REST_TF_os_2025_09_17.sql`) | Recriar com o mesmo alias de schema, para a URL não mudar |
 | `FLOWS_FILES` | 52 arquivos, 31 MB: 27 backups automáticos de aplicação (25 do app 130), 20 PDFs de NF enviados pelo app 130, 4 scripts e 1 imagem | Fica para trás. O export do app 130 de 2026-02 não lê `APEX_APPLICATION_FILES` |
 | Diretórios | Só `DATA_PUMP_DIR` e `XMLDIR`, do próprio banco | Nada da aplicação a recriar |
@@ -63,16 +63,16 @@ O próprio banco confirmou: no modo schema, o Data Pump leva só `RLS_CONTEXT`, 
 
 1. **O TF tem a role `DBA`.** O TF é o schema da aplicação, e num banco sem patches uma senha do TF vazada daria controle total. Em PL/SQL com direitos do definidor, que é o padrão, roles não valem, e o APEX na prática também não as considera. Assim, o código e as páginas não devem depender do `DBA`. Quem depende são as conexões diretas como TF, como o SQLcl. **Recomendo não conceder `DBA` no destino** e usar um usuário administrativo à parte. Testar em homologação. *Pendente: decisão de Tiago.*
 
-2. **E-mail fica para depois.** *Decisão (2026-11-10):* o envio por SMTP não migra. Ninguém usa o envio hoje, e o plano é contratar um serviço de e-mail por API. Com isso, o [bloqueio da porta 25 na OCI](https://docs.oracle.com/en-us/iaas/releasenotes/changes/f7e95770-9844-43db-916c-6ccbaf2cfe24) deixa de importar. No destino:
+2. **E-mail fica para depois.** *Decisão (2026-11-10, [ADR 0007](decisoes/0007-email-por-smtp-fora-da-migracao.md)):* o envio por SMTP não migra. Ninguém usa o envio hoje, e o plano é contratar um serviço de e-mail por API. Com isso, o [bloqueio da porta 25 na OCI](https://docs.oracle.com/en-us/iaas/releasenotes/changes/f7e95770-9844-43db-916c-6ccbaf2cfe24) deixa de importar. No destino:
    - sem ACL de SMTP e sem `EXECUTE` em `UTL_SMTP`;
    - os dois jobs de e-mail ficam desligados, inclusive depois da virada;
    - o `TF_PCK_SENDMAIL_UTL_SMTP` fica inválido, porque precisa de `V$PARAMETER`. É esperado.
 
    Quando o serviço for contratado, o envio sai por HTTPS (`APEX_WEB_SERVICE`), com ACL para o host do provedor na porta 443.
 
-3. **PDFs no log.** *Decisão (2026-11-10):* tirar as cópias. Os logs `LTF_` ([convenção](convencoes/banco.md)) guardam 457 MB de PDFs de boleto em 15.307 linhas e 386 MB de DANFEs em 11.787 linhas, 843 MB no total. A causa: as triggers de log copiam a linha inteira, PDF incluído, a cada insert, update ou delete. O boleto tem ainda a coluna `BUFFER_PDF` (CLOB), copiada do mesmo jeito. Nenhum pacote local e nenhuma página do export do app 130 leem essas colunas do log. O patch está na §8 e roda na produção **antes do export**, para o dump já sair sem as cópias.
+3. **PDFs no log.** *Decisão (2026-11-10, [ADR 0008](decisoes/0008-arquivos-e-senhas-fora-dos-logs.md)):* tirar as cópias. Os logs `LTF_` ([convenção](convencoes/banco.md)) guardam 457 MB de PDFs de boleto em 15.307 linhas e 386 MB de DANFEs em 11.787 linhas, 843 MB no total. A causa: as triggers de log copiam a linha inteira, PDF incluído, a cada insert, update ou delete. O boleto tem ainda a coluna `BUFFER_PDF` (CLOB), copiada do mesmo jeito. Nenhum pacote local e nenhuma página do export do app 130 leem essas colunas do log. O patch está na §8 e roda na produção **antes do export**, para o dump já sair sem as cópias.
 
-4. **Login: o MD5 está confirmado.** `TF_PCK_AUTENTICACAO` (linha 149) e `TF_PCK_AUTENTICACAO_E` (linha 117) chamam `DBMS_OBFUSCATION_TOOLKIT.MD5`, que [foi removido no 21c](https://docs.oracle.com/en/database/oracle/oracle-database/21/rnrdm/deprecated-desupported-features.html). No ADB, os dois compilam porque o pacote foi alterado no teste de 2026-02, e lá o login com as senhas antigas não funcionou. *Decisão (2026-11-10):* o reset geral de senhas é aceitável. Então:
+4. **Login: o MD5 está confirmado.** `TF_PCK_AUTENTICACAO` (linha 149) e `TF_PCK_AUTENTICACAO_E` (linha 117) chamam `DBMS_OBFUSCATION_TOOLKIT.MD5`, que [foi removido no 21c](https://docs.oracle.com/en/database/oracle/oracle-database/21/rnrdm/deprecated-desupported-features.html). No ADB, os dois compilam porque o pacote foi alterado no teste de 2026-02, e lá o login com as senhas antigas não funcionou. *Decisão (2026-11-10, [ADR 0006](decisoes/0006-reset-de-senhas-com-hash-novo.md)):* o reset geral de senhas é aceitável. Então:
    - **Hash novo:** trocar o MD5 por SHA-512 com salt aleatório por usuário, via `DBMS_CRYPTO` (`HASH_SH512`, ou PBKDF2 com `HMAC_SH512` e iterações). Conferir o tamanho da coluna `SENHA`.
    - **Virada:** todos recebem uma senha temporária com `SENHA_EXPIRADA` ligado. O campo já existe; confirmar que ele obriga a troca no primeiro acesso. Como o e-mail não migra, a senha temporária chega aos clientes por outro canal.
    - **Hashes no log:** a versão 1.0 da trigger de log da `TF_USUARIO` copia a coluna `SENHA`. Se a atual ainda copia, os hashes MD5 antigos continuam no log depois do reset. A §8 traz a mesma solução dos PDFs.
@@ -80,7 +80,7 @@ O próprio banco confirmou: no modo schema, o Data Pump leva só `RLS_CONTEXT`, 
 
 5. **`V$SESSION` é obrigatória.** Das ~620 views `V$` liberadas hoje, o código usa só `V$SESSION` e `V$PARAMETER`. A `TF_PRC_BUSCA_DADOS_LOG` lê `V$SESSION` e é chamada pelas triggers de log mais antigas, as que começam com `tf_prc_busca_dados_log(userenv('sessionid'), ...)`. No ADB ela ficou inválida por falta do grant. Sem ele, insert, update e delete nas tabelas com essas triggers falham. O script da §4 concede `SELECT` em `V_$SESSION`.
 
-6. **Usuário do JRI.** O `APEXREP` foi criado para isolar o TF do Jasper. Os relatórios leem direto do `tf.`, exceto um que cita `tf_pessoa` sem prefixo. O JRI pode conectar como TF, mas a senha fica num arquivo na VM de aplicação, a exposta à internet, e com ela vêm escrita e DDL no schema inteiro de um banco sem patches. *Decisão (2026-11-10):* manter o isolamento, com o `APEXREP` recriado vazio e só de leitura. No 26ai isso não dá trabalho a cada relatório novo:
+6. **Usuário do JRI.** O `APEXREP` foi criado para isolar o TF do Jasper. Os relatórios leem direto do `tf.`, exceto um que cita `tf_pessoa` sem prefixo. O JRI pode conectar como TF, mas a senha fica num arquivo na VM de aplicação, a exposta à internet, e com ela vêm escrita e DDL no schema inteiro de um banco sem patches. *Decisão (2026-11-10, [ADR 0009](decisoes/0009-jri-le-pelo-apexrep-vazio-e-so-de-leitura.md)):* manter o isolamento, com o `APEXREP` recriado vazio e só de leitura. No 26ai isso não dá trabalho a cada relatório novo:
    - **Sem sinônimos:** uma trigger de logon faz `alter session set current_schema = TF`, e os nomes sem prefixo passam a ser procurados no TF.
    - **Um grant só:** o [privilégio de schema do 23ai/26ai](https://oracle-base.com/articles/23/schema-privileges-23), `grant select any table on schema tf to apexrep`, cobre tabelas, views e views materializadas, inclusive as criadas depois.
    - **Exceção:** função ou pacote chamado na query de um relatório precisa de `grant execute` individual. Não usar `EXECUTE ANY PROCEDURE ON SCHEMA`: o código do TF roda com os direitos do TF, e um procedimento que grava quebraria o isolamento.
@@ -424,6 +424,7 @@ Consultadas de 2026-11-05 a 2026-11-10.
 
 ## Changelog
 
+- **2026-11-10 (4):** decisões passadas para os ADRs: [ADR 0005](decisoes/0005-importar-so-o-owner-tf.md) a [ADR 0009](decisoes/0009-jri-le-pelo-apexrep-vazio-e-so-de-leitura.md).
 - **2026-11-10 (3):** Tiago decidiu manter o `APEXREP`, vazio e só de leitura, com o grant de schema (script da §4 ativado). Pacote `TF_PCK_AUTENTICACAO_E` do ADB salvo; ADB `DEVDOLOMITI` encerrado e dump do bucket apagado.
 - **2026-11-10 (2):** patch dos PDFs aplicado no desenvolvimento e na produção. Pacote de autenticação do ADB salvo. Usuário do JRI: proposta de recriar o `APEXREP` vazio e só de leitura, com privilégio de schema e `current_schema`, sem grants nem sinônimos por relatório.
 - **2026-11-10:** terceira rodada de consultas incorporada (§7). Tiago decidiu: reset geral de senhas aceito, com hash novo; e-mail por SMTP não migra, e os dois jobs de e-mail ficam desligados; PDFs saem do log (patch na §8); `APEXREP` e `DOLOMITI` ficam para trás. Sinônimos públicos não são recriados. Achado: a `TF_PRC_BUSCA_DADOS_LOG` precisa do grant de `V$SESSION`, senão as triggers de log antigas falham. Pendentes: role `DBA` e usuário do JRI.

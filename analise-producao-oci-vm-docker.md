@@ -1,6 +1,6 @@
 # Análise: produção em VM na OCI com Oracle Free em Docker
 
-> **Status:** decisão em andamento: seguir com Oracle Free em 2 VMs, condicionada ao teste de carga (§8). Nada foi provisionado.
+> **Status:** decisão em andamento: seguir com Oracle Free em 2 VMs, condicionada ao teste de carga (§8): [ADR 0001](decisoes/0001-producao-em-oracle-free-em-duas-vms.md). Nada foi provisionado.
 > **Última atualização:** 2026-11-10
 > **Complementa:** [arquitetura-migracao-oci.md](arquitetura-migracao-oci.md), cujo desenho com ATP deixa de ser o plano se o teste de carga passar.
 
@@ -12,7 +12,7 @@ Pergunta: dá para trocar os serviços gerenciados por uma ou duas VMs Linux na 
 
 **Com os dados reais, a proposta fica viável: ~R$ 277/mês para produção e desenvolvimento, contra R$ 370/mês hoje. Falta o teste de carga, e a produção deve usar as imagens oficiais da Oracle com compose próprio, não o projeto dos links.**
 
-- **Decisão (2026-11-04):** Tiago decidiu não consultar a Oracle e assumir o risco de licença (§3.1).
+- **Decisão (2026-11-04):** Tiago decidiu não consultar a Oracle e assumir o risco de licença (§3.1, [ADR 0002](decisoes/0002-risco-de-licenca-do-free-assumido.md)).
 - **Espaço:** o Free atende com folga. O owner TF tem 1,84 GB, cerca de 20% dos ~9 GB úteis, e deve chegar ao destino com ~1 GB sem as cópias de PDF no log (§4).
 - **Carga:** provavelmente atende. O XE roda hoje com 1 CPU e 1 GB, o Free permite o dobro, e o pico de 80 sessões cobre ~16 meses. O 26ai tende a consumir mais, então é preciso testar (§4).
 - **Custo:** a economia sobre hoje é de ~R$ 93/mês, em preços de lista sem impostos. Ela não paga o trabalho de migrar: o ganho real é sair de um banco e de um sistema operacional muito antigos (§5).
@@ -91,7 +91,7 @@ Pela KB, a Dolomiti desenvolve um ERP próprio, multitenant, usado por clientes 
 - **Comprar SE2 avulso não resolve sozinho:** o mesmo documento diz que o pedido de compra precisa incluir a permissão de hosting.
 - **Serviços de nuvem:** a redação antiga do contrato de nuvem da Oracle trata terceiros que interagem com a aplicação como "Users", o que indica que ATP, APEX Service e Base Database comportam esse modelo. Não li a versão vigente do contrato.
 
-> **Decisão (2026-11-04):** Tiago decidiu não consultar a Oracle e assumir este risco. Não há confirmação por escrito, e o risco fica aberto enquanto durar a operação no Free. O plano de saída ensaiado (§9) limita o impacto, caso a Oracle questione o uso.
+> **Decisão (2026-11-04):** Tiago decidiu não consultar a Oracle e assumir este risco: [ADR 0002](decisoes/0002-risco-de-licenca-do-free-assumido.md).
 
 ### 3.2 Sem patches e sem suporte
 
@@ -279,7 +279,7 @@ Internet
 
 A VM A1 Always Free (2 OCPU / 12 GB) substitui a VM de R$ 70/mês por **R$ 0**.
 
-> **Decisão (2026-11-05):** o dev roda o Oracle Free em Docker com o **mesmo compose e as mesmas imagens da produção**, para os ambientes ficarem o mais parecidos possível. O ADB `DEVDOLOMITI` deixa de ser o ambiente de dev. O projeto dos links fica só como referência de configuração.
+> **Decisão (2026-11-05):** o dev roda o Oracle Free em Docker com o **mesmo compose e as mesmas imagens da produção**: [ADR 0003](decisoes/0003-dev-em-a1-com-o-compose-da-producao.md).
 
 As diferenças em relação à produção devem ser só as intencionais: jobs desligados, sem ACL de SMTP, integrações apontando para a homologação dos bancos e acesso restrito ou dados mascarados ([importação](migracao-oci-importacao-tf.md)).
 
@@ -451,7 +451,7 @@ select name, type, count(*) linhas
 
 ### Importação só do owner TF
 
-É uma boa escolha: as três versões antigas do APEX e o dicionário do 11g ficam para trás, e o Data Pump é o [caminho indicado pela Oracle](https://www.oracle.com/database/free/faq/) de XE para Free. Um teste em 2026-02 já importou o schema no ADB, com o mesmo caminho.
+É uma boa escolha ([ADR 0005](decisoes/0005-importar-so-o-owner-tf.md)): as três versões antigas do APEX e o dicionário do 11g ficam para trás, e o Data Pump é o [caminho indicado pela Oracle](https://www.oracle.com/database/free/faq/) de XE para Free. Um teste em 2026-02 já importou o schema no ADB, com o mesmo caminho.
 
 O detalhamento está em [migracao-oci-importacao-tf.md](migracao-oci-importacao-tf.md): linha de base, o que fica fora do schema, achados, script de pré-import, ACLs, comandos, conferência e terceira rodada de consultas. Os três cuidados que evitam dano real continuam valendo:
 
@@ -468,15 +468,15 @@ Concluídos:
 - [x] Confirmar edição, tamanho e picos da produção: XE 11.2.0.2, TF com 1,84 GB (§4).
 - [x] Levantar o custo atual: R$ 370/mês (§5).
 - [x] Contar os relatórios Jasper: até 5 em uso.
-- [x] Definir a consulta de licença: dispensada por decisão de Tiago (§3.1).
+- [x] Definir a consulta de licença: dispensada por decisão de Tiago ([ADR 0002](decisoes/0002-risco-de-licenca-do-free-assumido.md)).
 - [x] Rodar o inventário do §8 (2026-11-05).
 - [x] Confirmar a home region: São Paulo.
 - [x] Definir quem responde a incidentes e avaliar LGPD e contratos: decidido por Tiago (§8).
 - [x] Rodar a terceira rodada de consultas, na produção e no ADB (2026-11-10).
-- [x] Decidir o hash de senha: reset geral com hash novo (2026-11-10).
-- [x] Decidir o que fazer com as cópias de PDF nos logs `LTF_`: tirar, por patch (2026-11-10).
-- [x] Decidir o e-mail: SMTP não migra; no futuro, serviço por API. A porta 25 deixa de importar (2026-11-10).
-- [x] Decidir os owners `APEXREP` e `DOLOMITI`: ficam para trás (2026-11-10).
+- [x] Decidir o hash de senha: reset geral com hash novo (2026-11-10, [ADR 0006](decisoes/0006-reset-de-senhas-com-hash-novo.md)).
+- [x] Decidir o que fazer com as cópias de PDF nos logs `LTF_`: tirar, por patch (2026-11-10, [ADR 0008](decisoes/0008-arquivos-e-senhas-fora-dos-logs.md)).
+- [x] Decidir o e-mail: SMTP não migra; no futuro, serviço por API. A porta 25 deixa de importar (2026-11-10, [ADR 0007](decisoes/0007-email-por-smtp-fora-da-migracao.md)).
+- [x] Decidir os owners `APEXREP` e `DOLOMITI`: ficam para trás (2026-11-10, [ADR 0005](decisoes/0005-importar-so-o-owner-tf.md)).
 
 Conta OCI, antes de criar as VMs de produção:
 
@@ -492,7 +492,7 @@ Antes do import:
 
 - [x] Aplicar o patch dos PDFs no log, no desenvolvimento atual e na produção ([importação, §8](migracao-oci-importacao-tf.md)): feito em 2026-11-10.
 - [ ] Conferir se a `LTF_USUARIO` guarda a coluna `SENHA`; se guardar, aplicar o mesmo patch.
-- [x] Decidir o usuário do JRI: `APEXREP` vazio e só de leitura, com grant de schema (2026-11-10, [importação, §3](migracao-oci-importacao-tf.md)).
+- [x] Decidir o usuário do JRI: `APEXREP` vazio e só de leitura, com grant de schema (2026-11-10, [ADR 0009](decisoes/0009-jri-le-pelo-apexrep-vazio-e-so-de-leitura.md)).
 - [ ] Decidir se o TF fica sem a role `DBA` no destino (recomendado).
 - [ ] Levantar quem consome o módulo REST `/os/`.
 - [ ] Listar o que mais roda nas duas VMs atuais.
@@ -554,6 +554,7 @@ Consultadas de 2026-11-03 a 2026-11-05.
 
 ## Changelog
 
+- **2026-11-10 (3):** decisões passadas para ADRs: [ADR 0001](decisoes/0001-producao-em-oracle-free-em-duas-vms.md) a [ADR 0003](decisoes/0003-dev-em-a1-com-o-compose-da-producao.md) desta análise e [ADR 0005](decisoes/0005-importar-so-o-owner-tf.md) a [ADR 0009](decisoes/0009-jri-le-pelo-apexrep-vazio-e-so-de-leitura.md) da importação. Os trechos de decisão apontam para eles.
 - **2026-11-10 (2):** patch dos PDFs aplicado. `APEXREP` mantido, vazio e só de leitura. ADB `DEVDOLOMITI` encerrado e dump apagado. Confirmado que a VM de desenvolvimento A1 não depende do upgrade da conta.
 - **2026-11-10:** terceira rodada de consultas incorporada ([importação, §7](migracao-oci-importacao-tf.md)). Critério de espaço fechado: boletos crescem ~90 MB/ano, e o TF chega com ~1 GB sem as cópias de PDF no log. Tiago decidiu: reset geral de senhas com hash novo, e-mail por SMTP fora da migração, PDFs fora do log e `APEXREP` e `DOLOMITI` fora da migração.
 - **2026-11-06:** o proxy reverso da VM de aplicação passa a ser só o nginx. node4ords e suez, os dois apps Node de hoje, não migram ([proxy-reverso.md](proxy-reverso.md)).

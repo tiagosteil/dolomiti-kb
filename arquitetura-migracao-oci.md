@@ -2,7 +2,7 @@
 
 > **Status:** rascunho para validação — revisar antes de iniciar a implementação.
 > **Última atualização:** 2026-11-10
-> **Atenção:** o plano em curso é o Oracle Free em VMs ([analise-producao-oci-vm-docker.md](analise-producao-oci-vm-docker.md)). O ADB de teste citado no §1 foi encerrado em 2026-11-10. A rede, a VM de borda com nginx, o JRI e as integrações continuam valendo como referência.
+> **Atenção:** o plano em curso é o Oracle Free em VMs ([ADR 0001](decisoes/0001-producao-em-oracle-free-em-duas-vms.md), [análise](analise-producao-oci-vm-docker.md)). O ADB de teste citado no §1 foi encerrado em 2026-11-10. A rede, a VM de borda com nginx, o JRI e as integrações continuam valendo como referência.
 
 Documento de referência agrupando as decisões de arquitetura para a migração
 da infraestrutura da Dolomiti (hoje 100% em VM na Locaweb) para a Oracle Cloud
@@ -452,6 +452,7 @@ para R$ 2.647,53**.
 
 ## Changelog
 
+- **2026-11-10:** o plano passou a ser o Oracle Free em VMs ([ADR 0001](decisoes/0001-producao-em-oracle-free-em-duas-vms.md)); o desenho com ATP fica como referência de rede, nginx, JRI e integrações.
 - **2026-11-06:** na VM de borda, o nginx substitui os apps Node (node4ords na
   entrada e suez na saída). Corrigido o padrão de chamada do Sicoob: hoje é
   `apisicoobauth.localhost:3000`, pelo suez, e o proxy escolhe o destino pelo

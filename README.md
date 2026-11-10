@@ -28,8 +28,22 @@ Desde 2026-11-10 esta KB é o repositório `dolomiti-kb` no GitHub. Os caminhos 
 
 `app/proxy/` e `Infra/` têm certificados e senhas em texto. Podem ser lidos, mas nenhum trecho com segredo entra neste repositório.
 
-## Decisões, runbooks e lições
-- [decisoes/](decisoes/) — ADRs: o porquê de cada escolha. Nenhum ainda; os primeiros saem das análises da migração.
+## Decisões
+ADRs em [decisoes/](decisoes/): o porquê de cada escolha, o que foi recusado e como reverter.
+
+| ADR | Título | Status |
+|---|---|---|
+| [0001](decisoes/0001-producao-em-oracle-free-em-duas-vms.md) | Produção em Oracle Free 26ai, em Docker, em duas VMs na OCI | Proposta até o teste de carga (Tiago, 2026-11-04) |
+| [0002](decisoes/0002-risco-de-licenca-do-free-assumido.md) | Risco de licença do Oracle Free assumido, sem consulta à Oracle | Aceita 2026-11-04 (Tiago) |
+| [0003](decisoes/0003-dev-em-a1-com-o-compose-da-producao.md) | Desenvolvimento em VM A1 Always Free, com o compose e as imagens da produção | Aceita 2026-11-05 (Tiago) |
+| [0004](decisoes/0004-nginx-no-lugar-de-node4ords-e-suez.md) | nginx no lugar do node4ords e do suez | Aceita 2026-11-06 (Tiago) |
+| [0005](decisoes/0005-importar-so-o-owner-tf.md) | Importar só o owner TF; `APEXREP` e `DOLOMITI` ficam para trás | Aceita 2026-11-10 (Tiago) |
+| [0006](decisoes/0006-reset-de-senhas-com-hash-novo.md) | Reset geral de senhas, com hash novo, na virada | Aceita 2026-11-10 (Tiago) |
+| [0007](decisoes/0007-email-por-smtp-fora-da-migracao.md) | E-mail por SMTP fica fora da migração | Aceita 2026-11-10 (Tiago) |
+| [0008](decisoes/0008-arquivos-e-senhas-fora-dos-logs.md) | Os logs `LTF_` não guardam arquivo nem senha | Aceita e aplicada 2026-11-10 (Tiago) |
+| [0009](decisoes/0009-jri-le-pelo-apexrep-vazio-e-so-de-leitura.md) | O JRI lê pelo `APEXREP`, vazio e só de leitura | Aceita 2026-11-10 (Tiago) |
+
+## Runbooks e lições
 - [runbooks/](runbooks/) — procedimentos repetíveis. Nenhum ainda.
 - [licoes/_indice.md](licoes/_indice.md) — regras aprendidas na operação, carregadas em toda sessão do Claude Code.
 

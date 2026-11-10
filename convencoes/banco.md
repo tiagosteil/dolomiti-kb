@@ -24,7 +24,7 @@ Padrões de PL/SQL válidos para todo o sistema (schema `TF`).
 - **Inclusão:** `DATA_INCLUSAO` (`DATE DEFAULT SYSDATE`) + `USUARIO_INCLUSAO` (`VARCHAR2`).
 - **Alteração:** `DATA_ALTERACAO` + `USUARIO_ALTERACAO`.
 - Algumas tabelas têm **trigger de log** própria que grava histórico numa tabela sombra `L<tabela>` (ex.: `TF_PESSOA_REPRESENTANTE` → `LTF_PESSOA_REPRESENTANTE`). Onde existir, o log de alteração já é automático; as colunas `DATA_ALTERACAO/USUARIO_ALTERACAO` da própria linha são preenchidas pelo processo da tela.
-- **O log não guarda arquivo nem senha** (decisão de 2026-11-10). Colunas BLOB/CLOB com PDF ou imagem e hashes de senha ficam vazios na tabela `L<tabela>`; o nome e o tipo do arquivo continuam no log. O jeito usado é uma trigger `BEFORE INSERT` na própria tabela de log que zera essas colunas (ex.: `TRGB_LTF_BOLETO_COBRANCA`), sem mexer na trigger de log. Detalhes em [migracao-oci-importacao-tf.md](../migracao-oci-importacao-tf.md) §8.
+- **O log não guarda arquivo nem senha** ([ADR 0008](../decisoes/0008-arquivos-e-senhas-fora-dos-logs.md)). Colunas BLOB/CLOB com PDF ou imagem e hashes de senha ficam vazios na tabela `L<tabela>`; o nome e o tipo do arquivo continuam no log. O jeito usado é uma trigger `BEFORE INSERT` na própria tabela de log que zera essas colunas (ex.: `TRGB_LTF_BOLETO_COBRANCA`), sem mexer na trigger de log. Detalhes em [migracao-oci-importacao-tf.md](../migracao-oci-importacao-tf.md) §8.
 
 ## Domínios (status/flags)
 - Representados por `VARCHAR2(1)` + `CHECK`. Prefira **constraint nomeada** (`..._CK`) para facilitar manutenção.
