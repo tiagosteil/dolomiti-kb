@@ -61,7 +61,7 @@ O próprio banco confirmou: no modo schema, o Data Pump leva só `RLS_CONTEXT`, 
 
 ## 3. Achados que pedem decisão
 
-1. **O TF tem a role `DBA`.** O TF é o schema da aplicação, e num banco sem patches uma senha do TF vazada daria controle total. Em PL/SQL com direitos do definidor, que é o padrão, roles não valem, e o APEX na prática também não as considera. Assim, o código e as páginas não devem depender do `DBA`. Quem depende são as conexões diretas como TF, como o SQLcl. **Recomendo não conceder `DBA` no destino** e usar um usuário administrativo à parte. Testar em homologação. *Pendente: decisão de Tiago.*
+1. **O TF tem a role `DBA`.** O TF é o schema da aplicação, e num banco sem patches uma senha do TF vazada daria controle total. Em PL/SQL com direitos do definidor, que é o padrão, roles não valem, e o APEX na prática também não as considera. Assim, o código e as páginas não devem depender do `DBA`. Quem depende são as conexões diretas como TF, como o SQLcl. **Recomendo não conceder `DBA` no destino** e usar um usuário administrativo à parte. Testar em homologação. *Decisão (2026-11-10, [ADR 0010](decisoes/0010-tf-sem-a-role-dba.md)):* o TF nasce sem `DBA`, e os acessos são liberados conforme a necessidade, sempre por grant direto.
 
 2. **E-mail fica para depois.** *Decisão (2026-11-10, [ADR 0007](decisoes/0007-email-por-smtp-fora-da-migracao.md)):* o envio por SMTP não migra. Ninguém usa o envio hoje, e o plano é contratar um serviço de e-mail por API. Com isso, o [bloqueio da porta 25 na OCI](https://docs.oracle.com/en-us/iaas/releasenotes/changes/f7e95770-9844-43db-916c-6ccbaf2cfe24) deixa de importar. No destino:
    - sem ACL de SMTP e sem `EXECUTE` em `UTL_SMTP`;
@@ -123,6 +123,7 @@ create user tf identified by "&senha_tf"
   default tablespace ts_tf quota unlimited on ts_tf quota unlimited on ts_log;
 grant create session, create table, create view, create sequence, create procedure,
       create trigger, create type, create synonym, create job to tf;
+-- Privilégio que faltar na homologação entra aqui, direto e específico, com o motivo (ADR 0010)
 
 -- 5. Contexto do filtro multiempresa
 create or replace context ctx using tf.tf_pck_contexto accessed globally;
@@ -424,6 +425,7 @@ Consultadas de 2026-11-05 a 2026-11-10.
 
 ## Changelog
 
+- **2026-11-10 (5):** Tiago decidiu: o TF nasce sem `DBA`, com acessos liberados conforme a necessidade ([ADR 0010](decisoes/0010-tf-sem-a-role-dba.md)).
 - **2026-11-10 (4):** decisões passadas para os ADRs: [ADR 0005](decisoes/0005-importar-so-o-owner-tf.md) a [ADR 0009](decisoes/0009-jri-le-pelo-apexrep-vazio-e-so-de-leitura.md).
 - **2026-11-10 (3):** Tiago decidiu manter o `APEXREP`, vazio e só de leitura, com o grant de schema (script da §4 ativado). Pacote `TF_PCK_AUTENTICACAO_E` do ADB salvo; ADB `DEVDOLOMITI` encerrado e dump do bucket apagado.
 - **2026-11-10 (2):** patch dos PDFs aplicado no desenvolvimento e na produção. Pacote de autenticação do ADB salvo. Usuário do JRI: proposta de recriar o `APEXREP` vazio e só de leitura, com privilégio de schema e `current_schema`, sem grants nem sinônimos por relatório.

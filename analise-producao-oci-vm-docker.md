@@ -493,7 +493,7 @@ Antes do import:
 - [x] Aplicar o patch dos PDFs no log, no desenvolvimento atual e na produção ([importação, §8](migracao-oci-importacao-tf.md)): feito em 2026-11-10.
 - [ ] Conferir se a `LTF_USUARIO` guarda a coluna `SENHA`; se guardar, aplicar o mesmo patch.
 - [x] Decidir o usuário do JRI: `APEXREP` vazio e só de leitura, com grant de schema (2026-11-10, [ADR 0009](decisoes/0009-jri-le-pelo-apexrep-vazio-e-so-de-leitura.md)).
-- [ ] Decidir se o TF fica sem a role `DBA` no destino (recomendado).
+- [x] Decidir se o TF fica sem a role `DBA` no destino: sem `DBA`, com acessos liberados conforme a necessidade (2026-11-10, [ADR 0010](decisoes/0010-tf-sem-a-role-dba.md)).
 - [ ] Levantar quem consome o módulo REST `/os/`.
 - [ ] Listar o que mais roda nas duas VMs atuais.
 
@@ -554,6 +554,7 @@ Consultadas de 2026-11-03 a 2026-11-05.
 
 ## Changelog
 
+- **2026-11-10 (4):** Tiago decidiu que o TF nasce sem a role `DBA` ([ADR 0010](decisoes/0010-tf-sem-a-role-dba.md)).
 - **2026-11-10 (3):** decisões passadas para ADRs: [ADR 0001](decisoes/0001-producao-em-oracle-free-em-duas-vms.md) a [ADR 0003](decisoes/0003-dev-em-a1-com-o-compose-da-producao.md) desta análise e [ADR 0005](decisoes/0005-importar-so-o-owner-tf.md) a [ADR 0009](decisoes/0009-jri-le-pelo-apexrep-vazio-e-so-de-leitura.md) da importação. Os trechos de decisão apontam para eles.
 - **2026-11-10 (2):** patch dos PDFs aplicado. `APEXREP` mantido, vazio e só de leitura. ADB `DEVDOLOMITI` encerrado e dump apagado. Confirmado que a VM de desenvolvimento A1 não depende do upgrade da conta.
 - **2026-11-10:** terceira rodada de consultas incorporada ([importação, §7](migracao-oci-importacao-tf.md)). Critério de espaço fechado: boletos crescem ~90 MB/ano, e o TF chega com ~1 GB sem as cópias de PDF no log. Tiago decidiu: reset geral de senhas com hash novo, e-mail por SMTP fora da migração, PDFs fora do log e `APEXREP` e `DOLOMITI` fora da migração.

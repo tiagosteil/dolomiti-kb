@@ -42,6 +42,7 @@ ADRs em [decisoes/](decisoes/): o porquê de cada escolha, o que foi recusado e 
 | [0007](decisoes/0007-email-por-smtp-fora-da-migracao.md) | E-mail por SMTP fica fora da migração | Aceita 2026-11-10 (Tiago) |
 | [0008](decisoes/0008-arquivos-e-senhas-fora-dos-logs.md) | Os logs `LTF_` não guardam arquivo nem senha | Aceita e aplicada 2026-11-10 (Tiago) |
 | [0009](decisoes/0009-jri-le-pelo-apexrep-vazio-e-so-de-leitura.md) | O JRI lê pelo `APEXREP`, vazio e só de leitura | Aceita 2026-11-10 (Tiago) |
+| [0010](decisoes/0010-tf-sem-a-role-dba.md) | O TF nasce sem a role `DBA`; privilégios só diretos e conforme a necessidade | Aceita 2026-11-10 (Tiago) |
 
 ## Runbooks e lições
 - [runbooks/](runbooks/) — procedimentos repetíveis. Nenhum ainda.
