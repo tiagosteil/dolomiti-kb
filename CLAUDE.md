@@ -55,7 +55,7 @@ Lição que não muda comportamento é diário, não lição. Registre a **regra
 | `runbooks/` | Procedimentos repetíveis |
 | `licoes/` | Lições; `_indice.md` é carregado em toda sessão |
 | `scripts/seguranca/` | Verificação de segredos, usada pelo hook do Claude Code e pelo pre-commit do git |
-| `.claude/` | Hook e skills do projeto |
+| `.claude/` | Hooks (segredos e cobrança de commit) e skills do projeto |
 
 ## Convenções
 
@@ -63,7 +63,7 @@ Lição que não muda comportamento é diário, não lição. Registre a **regra
 - Arquivos em kebab-case. ADR: `NNNN-titulo.md`. Lição: `AAAA-MM-DD-titulo.md`.
 - Um assunto por arquivo, uma casa por assunto: referenciar por link, nunca copiar. Títulos de seção estáveis, porque outros documentos apontam para eles. Changelog curto no fim de cada documento. Documento que crescer demais vira subarquivos listados no `README.md`.
 - Imagens Docker sempre com versão fixa, nunca `latest`.
-- Commit com prefixo — `docs:` para conteúdo, `kb:` para a estrutura da KB (skills, hooks, scripts) — seguido do que mudou. Conferir `git diff --cached --stat` antes. **Push logo depois de cada commit**, com `git pull --rebase` antes. Nunca force push.
+- Commit com prefixo — `docs:` para conteúdo, `kb:` para a estrutura da KB (skills, hooks, scripts) — seguido do que mudou. Conferir `git diff --cached --stat` antes. **Push logo depois de cada commit**, com `git pull --rebase` antes. Nunca force push. Um hook de Stop cobra o commit e o push do que a sessão alterou; se a mudança ainda depende da revisão do usuário, lembrar no fim da resposta em vez de commitar.
 - Cada clone ativa o pre-commit uma vez: `git config core.hooksPath scripts/git-hooks`.
 
 ## Lições ativas

@@ -12,6 +12,17 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I \"$CLAUDE_PROJECT_DIR/.claude/hooks/exige-registro.py\"",
+            "timeout": 15
+          }
+        ]
+      }
     ]
   }
 }
