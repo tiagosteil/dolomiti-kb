@@ -288,7 +288,7 @@ As diferenças em relação à produção devem ser só as intencionais: jobs de
 - **Diferença de arquitetura:** com dev em ARM e produção em x86, os relatórios do JRI precisam de teste final em x86, principalmente fontes. O dev também não serve para medir desempenho: a A1 tem 2 núcleos inteiros e roda banco e aplicação na mesma VM. O teste de carga é feito nas VMs de produção, antes da virada.
 - **Dados reais:** o projeto avisa "Do not use this environment for production data". Se o dev receber uma cópia do TF, mascarar os dados ou manter a VM sem acesso público, só por Bastion ou VPN.
 - **Isolamento:** sem rota para a porta 1521 da produção, com jobs desligados e integrações apontando para homologação dos bancos.
-- **Recolhimento:** a Oracle pode recolher instâncias Always Free ociosas. O critério exige CPU, rede e memória abaixo de 20% em 7 dias, e o banco com ORDS tende a manter a memória acima disso. Mesmo assim, manter o ambiente reproduzível.
+- **Recolhimento:** a Oracle pode recolher instâncias Always Free ociosas. O critério exige CPU, rede e memória abaixo de 20% em 7 dias, e o banco com ORDS tende a manter a memória acima disso. Na conta Pay As You Go o recolhimento não se aplica ([lição](licoes/2026-09-16-conta-oci-paga-e-franquia-a1.md)). Mesmo assim, manter o ambiente reproduzível.
 
 ### Montagem da VM de desenvolvimento (andamento)
 
@@ -481,7 +481,7 @@ Concluídos:
 Conta OCI, antes de criar as VMs de produção:
 
 - [ ] Conferir o titular e os dados de cobrança da conta: a nota fiscal precisa sair com o CNPJ da Dolomiti. Pela [FAQ de faturamento](https://www.oracle.com/br/corporate/invoicing/faqs/), mudanças nesses dados passam pelo Suporte de Faturamento, então é melhor acertar antes do upgrade.
-- [ ] Fazer o upgrade para Pay As You Go pelo [link **Upgrade** no banner do console](https://docs.oracle.com/iaas/Content/FreeTier/freetier.htm). Guias de terceiros indicam também *Billing & Cost Management* → *Upgrade and Manage Payment*, alguns dias de espera e um e-mail de confirmação. Cadastrar o cartão da empresa.
+- [ ] Fazer o upgrade para Pay As You Go pelo [link **Upgrade** no banner do console](https://docs.oracle.com/iaas/Content/FreeTier/freetier.htm). Guias de terceiros indicam também *Billing & Cost Management* → *Upgrade and Manage Payment*, alguns dias de espera e um e-mail de confirmação. Cadastrar o cartão de crédito **físico** da empresa, habilitado para compras internacionais: cartão virtual ou pré-pago é recusado e pode levar ao encerramento da conta ([lição](licoes/2026-09-16-conta-oci-paga-e-franquia-a1.md)).
 - [ ] Depois do upgrade, conferir que a VM A1 e os discos continuam grátis: a Oracle não cobra os recursos Always Free, só o que passa da franquia.
 - [ ] Criar um orçamento (*Budgets*) com alertas, por exemplo em R$ 300 e R$ 400/mês, para pegar cobrança inesperada no mesmo mês.
 - [ ] Ativar MFA no usuário administrador e criar compartimentos separados para produção e desenvolvimento.
@@ -554,6 +554,7 @@ Consultadas de 2026-11-03 a 2026-11-05.
 
 ## Changelog
 
+- **2026-11-10 (5):** lição de OCI incorporada ([lição](licoes/2026-09-16-conta-oci-paga-e-franquia-a1.md)): o recolhimento por ociosidade só vale em conta Free Tier, e o upgrade exige cartão físico.
 - **2026-11-10 (4):** Tiago decidiu que o TF nasce sem a role `DBA` ([ADR 0010](decisoes/0010-tf-sem-a-role-dba.md)).
 - **2026-11-10 (3):** decisões passadas para ADRs: [ADR 0001](decisoes/0001-producao-em-oracle-free-em-duas-vms.md) a [ADR 0003](decisoes/0003-dev-em-a1-com-o-compose-da-producao.md) desta análise e [ADR 0005](decisoes/0005-importar-so-o-owner-tf.md) a [ADR 0009](decisoes/0009-jri-le-pelo-apexrep-vazio-e-so-de-leitura.md) da importação. Os trechos de decisão apontam para eles.
 - **2026-11-10 (2):** patch dos PDFs aplicado. `APEXREP` mantido, vazio e só de leitura. ADB `DEVDOLOMITI` encerrado e dump apagado. Confirmado que a VM de desenvolvimento A1 não depende do upgrade da conta.

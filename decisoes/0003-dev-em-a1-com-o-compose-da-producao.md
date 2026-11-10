@@ -34,7 +34,7 @@ As únicas diferenças devem ser as intencionais: jobs desligados, sem ACL de SM
 - **ARM no dev e x86 na produção:** os relatórios do JRI, principalmente as fontes, precisam de teste final em x86.
 - **O dev não mede desempenho:** a A1 tem 2 núcleos inteiros e roda banco e aplicação juntos. O teste de carga é feito nas VMs de produção.
 - **Imagens `arm64` não confirmadas:** o registro da Oracle exige login, e só o primeiro `docker pull` responde.
-- **Capacidade e recolhimento:** a A1 pode faltar em São Paulo (um único availability domain), e a Oracle pode recolher instância Always Free ociosa. O ambiente precisa ser reproduzível.
+- **Capacidade e recolhimento:** a A1 pode faltar em São Paulo (um único availability domain), e, enquanto a conta for Free Tier, a Oracle pode recolher instância Always Free ociosa; na conta paga, não ([lição](../licoes/2026-09-16-conta-oci-paga-e-franquia-a1.md)). O ambiente precisa ser reproduzível.
 - **Dados reais:** se o dev receber uma cópia do TF, mascarar os dados ou manter a VM sem acesso público.
 
 ## Como reverter
