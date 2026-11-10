@@ -295,16 +295,17 @@ As diferenças em relação à produção devem ser só as intencionais: jobs de
 Escolhas (2026-11-10):
 - **Rede própria:** VCN `vcn-dev`, `10.1.0.0/16`, no compartimento `dolomiti-dev`. A produção vai usar `10.0.0.0/16` no `dolomiti-prod`, e as redes não se enxergam.
 - **Sistema:** Ubuntu 24.04, porque o Docker tem suporte oficial nele em ARM e em x86. O Oracle Linux não está na lista oficial do Docker.
-- **Acesso:** só SSH por chave, com a porta 22 liberada para o IP do Tiago (`/32`). APEX, ORDS e a porta 1521 ficam acessíveis só por túnel SSH. Se o IP mudar com frequência, passar para o OCI Bastion.
+- **Acesso:** só SSH por chave, com a porta 22 liberada para o IP do Tiago (`/32`) no NSG da VM, não na security list ([ADR 0011](decisoes/0011-nsg-por-vm-e-security-list-fechada.md)). APEX, ORDS e a porta 1521 ficam acessíveis só por túnel SSH. Se o IP mudar com frequência, passar para o OCI Bastion.
 
 | # | Passo | Situação |
 |---|---|---|
 | 1 | Compartimentos `dolomiti-dev` e `dolomiti-prod` | ✅ 2026-11-10 |
 | 2 | VCN `vcn-dev` pelo assistente *Create VCN with Internet Connectivity*, com subnets pública e privada | ✅ 2026-11-10 |
-| 3 | Na *default security list for vcn-dev*, trocar a origem da regra da porta 22 de `0.0.0.0/0` para o IP do Tiago com `/32` | ⏸️ **Parado aqui** (2026-11-10). Ao retomar, conferir o IP atual com `curl -4 ifconfig.me` |
-| 4 | VM `vm-dev`: A1.Flex com 2 OCPU e 12 GB, Ubuntu 24.04, subnet pública com IPv4 público, chave SSH ed25519 e boot de 50 GB | Pendente |
-| 5 | Testar `ssh ubuntu@<IP público>` | Pendente |
-| 6 | Instalar o Docker e baixar as imagens do Oracle Free e do ORDS para ARM, o que confirma se as imagens `arm64` existem | Pendente |
+| 3 | NSG `nsg-vm-dev` na `vcn-dev`, com uma regra de entrada TCP 22 só do IP do Tiago (`/32`) | ⏸️ **Parado aqui** (2026-11-10). Ao retomar, conferir o IP atual com `curl -4 ifconfig.me` |
+| 4 | Nas security lists da `vcn-dev` (a padrão, da subnet pública, e a da privada), apagar as regras de entrada de portas, como a 22. Ficam só ICMP e a saída | Pendente |
+| 5 | VM `vm-dev`: A1.Flex com 2 OCPU e 12 GB, Ubuntu 24.04, subnet pública com IPv4 público, NSG `nsg-vm-dev`, chave SSH ed25519 e boot de 50 GB | Pendente |
+| 6 | Testar `ssh ubuntu@<IP público>` | Pendente |
+| 7 | Instalar o Docker e baixar as imagens do Oracle Free e do ORDS para ARM, o que confirma se as imagens `arm64` existem | Pendente |
 
 Os passos são feitos um por vez, conferindo o resultado antes do próximo.
 
@@ -554,6 +555,7 @@ Consultadas de 2026-11-03 a 2026-11-05.
 
 ## Changelog
 
+- **2026-11-10 (6):** SSH da VM de dev pelo NSG da VM, com as security lists fechadas ([ADR 0011](decisoes/0011-nsg-por-vm-e-security-list-fechada.md)). O passo 3 da montagem mudou, e entrou o passo 4 (limpar as security lists).
 - **2026-11-10 (5):** lição de OCI incorporada ([lição](licoes/2026-09-16-conta-oci-paga-e-franquia-a1.md)): o recolhimento por ociosidade só vale em conta Free Tier, e o upgrade exige cartão físico.
 - **2026-11-10 (4):** Tiago decidiu que o TF nasce sem a role `DBA` ([ADR 0010](decisoes/0010-tf-sem-a-role-dba.md)).
 - **2026-11-10 (3):** decisões passadas para ADRs: [ADR 0001](decisoes/0001-producao-em-oracle-free-em-duas-vms.md) a [ADR 0003](decisoes/0003-dev-em-a1-com-o-compose-da-producao.md) desta análise e [ADR 0005](decisoes/0005-importar-so-o-owner-tf.md) a [ADR 0009](decisoes/0009-jri-le-pelo-apexrep-vazio-e-so-de-leitura.md) da importação. Os trechos de decisão apontam para eles.

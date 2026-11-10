@@ -97,7 +97,7 @@ Internet
 | **Internet Gateway** | Entrada pública → VM de borda. |
 | **NAT Gateway** | Saída à internet para recursos privados (ex.: ADB → Sicredi). |
 | **Service Gateway** | Acesso a serviços Oracle sem sair para a internet. |
-| **Security Lists / NSGs** | Firewalls por subnet/recurso. Travam acesso ao JRI por CIDR. |
+| **Security Lists / NSGs** | Firewalls por subnet/recurso. Desde o [ADR 0011](decisoes/0011-nsg-por-vm-e-security-list-fechada.md), as security lists não abrem porta, e cada VM tem o seu NSG. |
 
 > ⚠️ **Ponto crítico:** a subnet do ADB **precisa de NAT Gateway** para que as
 > chamadas de saída (`UTL_HTTP`/`APEX_WEB_SERVICE`) para bancos externos
@@ -452,6 +452,7 @@ para R$ 2.647,53**.
 
 ## Changelog
 
+- **2026-11-10 (2):** security lists fechadas e um NSG por VM ([ADR 0011](decisoes/0011-nsg-por-vm-e-security-list-fechada.md)).
 - **2026-11-10:** o plano passou a ser o Oracle Free em VMs ([ADR 0001](decisoes/0001-producao-em-oracle-free-em-duas-vms.md)); o desenho com ATP fica como referência de rede, nginx, JRI e integrações.
 - **2026-11-06:** na VM de borda, o nginx substitui os apps Node (node4ords na
   entrada e suez na saída). Corrigido o padrão de chamada do Sicoob: hoje é
