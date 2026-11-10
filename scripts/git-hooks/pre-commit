@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Bloqueia commit com segredo. Ativar uma vez por clone:
+#   git config core.hooksPath scripts/git-hooks
+exec python3 -I "$(git rev-parse --show-toplevel)/scripts/seguranca/verificar_segredos.py" --staged

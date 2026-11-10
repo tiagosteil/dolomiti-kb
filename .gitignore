@@ -25,3 +25,7 @@ backups/
 
 # Sistema
 .DS_Store
+
+# O CLAUDE.md desta KB é compartilhado (regras do projeto), embora o ignore global
+# de cada um possa excluir CLAUDE.md pessoais
+!CLAUDE.md

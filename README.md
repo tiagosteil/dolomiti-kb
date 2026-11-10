@@ -28,8 +28,16 @@ Desde 2026-11-10 esta KB é o repositório `dolomiti-kb` no GitHub. Os caminhos 
 
 `app/proxy/` e `Infra/` têm certificados e senhas em texto. Podem ser lidos, mas nenhum trecho com segredo entra neste repositório.
 
+## Decisões, runbooks e lições
+- [decisoes/](decisoes/) — ADRs: o porquê de cada escolha. Nenhum ainda; os primeiros saem das análises da migração.
+- [runbooks/](runbooks/) — procedimentos repetíveis. Nenhum ainda.
+- [licoes/_indice.md](licoes/_indice.md) — regras aprendidas na operação, carregadas em toda sessão do Claude Code.
+
 ## Como manter esta KB
-- **Um assunto por arquivo**; mantenha os **títulos estáveis** (não renomear seções).
-- Decisões com **data absoluta** + um **changelog** curto no fim de cada módulo.
-- Convenções *cross-cutting* ficam em `convencoes/` e os módulos apenas **referenciam** (não repetem).
-- Quando um módulo crescer muito, quebre em subarquivos (ex.: `crm-dashboard.md`) e liste aqui.
+Regras de operação, convenções e o ciclo de decisões e lições ficam no [CLAUDE.md](CLAUDE.md). O Claude Code o lê em toda sessão, e ele vale também para quem edita à mão.
+
+Depois de clonar, ativar uma vez o bloqueio de segredos no commit:
+
+```
+git config core.hooksPath scripts/git-hooks
+```

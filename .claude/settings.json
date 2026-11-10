@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I \"$CLAUDE_PROJECT_DIR/scripts/seguranca/verificar_segredos.py\" --hook",
+            "timeout": 15,
+            "statusMessage": "Verificando segredos"
+          }
+        ]
+      }
+    ]
+  }
+}
