@@ -305,7 +305,7 @@ Escolhas (2026-11-10):
 | 3 | Upgrade da conta para Pay As You Go: conferir o titular e os dados de cobrança (CNPJ da Dolomiti), usar cartão de crédito físico internacional e, logo depois, criar o alerta de orçamento (§10) | ⏸️ **Em andamento** (2026-11-24) |
 | 4 | NSG `nsg-vm-dev` na `vcn-dev`, com uma regra de entrada TCP 22 por lugar (casa e escritório), cada uma com o IP `/32` | Pendente. Conferir o IP de cada lugar com `curl -4 ifconfig.me` |
 | 5 | Nas security lists da `vcn-dev` (a padrão, da subnet pública, e a da privada), apagar as regras de entrada de portas, como a 22. Ficam só ICMP e a saída | Pendente |
-| 6 | VM `vm-dev`: A1.Flex com 2 OCPU e 12 GB, Ubuntu 24.04, subnet pública com IPv4 público, NSG `nsg-vm-dev`, chave SSH ed25519 e boot de 50 GB | Pendente |
+| 6 | VM `vm-dev`: A1.Flex com 2 OCPU e 12 GB, Ubuntu 24.04, subnet pública com IPv4 público, NSG `nsg-vm-dev`, chave SSH ed25519 e boot de 50 GB | Pendente. A chave do Tiago (`~/.ssh/dolomiti`, ed25519) foi criada em 2026-11-24 |
 | 7 | Testar `ssh ubuntu@<IP público>` | Pendente |
 | 8 | Instalar o Docker e baixar as imagens do Oracle Free e do ORDS para ARM, o que confirma se as imagens `arm64` existem | Pendente |
 
@@ -557,7 +557,7 @@ Consultadas de 2026-11-03 a 2026-11-05.
 
 ## Changelog
 
-- **2026-11-24:** o upgrade da conta passou para antes da VM de dev (passo 3 da montagem), por causa do recolhimento de A1 ociosa e da capacidade em conta Free Tier. O NSG ganhou uma regra 22 por lugar (casa e escritório).
+- **2026-11-24:** o upgrade da conta passou para antes da VM de dev (passo 3 da montagem), por causa do recolhimento de A1 ociosa e da capacidade em conta Free Tier. O NSG ganhou uma regra 22 por lugar (casa e escritório). Com o console da OCI fora do ar nos menus, a chave SSH do passo 6 foi adiantada.
 - **2026-11-10 (6):** SSH da VM de dev pelo NSG da VM, com as security lists fechadas ([ADR 0011](decisoes/0011-nsg-por-vm-e-security-list-fechada.md)). O passo 3 da montagem mudou, e entrou o passo 4 (limpar as security lists).
 - **2026-11-10 (5):** lição de OCI incorporada ([lição](licoes/2026-09-16-conta-oci-paga-e-franquia-a1.md)): o recolhimento por ociosidade só vale em conta Free Tier, e o upgrade exige cartão físico.
 - **2026-11-10 (4):** Tiago decidiu que o TF nasce sem a role `DBA` ([ADR 0010](decisoes/0010-tf-sem-a-role-dba.md)).
