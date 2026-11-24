@@ -95,7 +95,7 @@ O próprio banco confirmou: no modo schema, o Data Pump leva só `RLS_CONTEXT`, 
 
 ## 4. Script de pré-import
 
-Rodar no destino com SQLcl, conectado como SYS. As senhas são pedidas na hora, para não ficarem em arquivo.
+Rodar no destino com SQLcl, conectado como SYS, depois do [`pos-instalacao.sql`](compose/banco/pos-instalacao.sql), que põe teto no undo, no USERS e na auditoria ([lição](licoes/2026-11-24-free-pdb-nao-abre-acima-de-12-gb.md)). As senhas são pedidas na hora, para não ficarem em arquivo.
 
 ```sql
 define ip_app      = 10.0.1.10     -- IP privado da VM de aplicação
@@ -425,6 +425,7 @@ Consultadas de 2026-11-05 a 2026-11-10.
 
 ## Changelog
 
+- **2026-11-24:** o script de pré-import roda depois do `pos-instalacao.sql` do compose, que põe teto nos datafiles da imagem ([lição](licoes/2026-11-24-free-pdb-nao-abre-acima-de-12-gb.md)).
 - **2026-11-10 (5):** Tiago decidiu: o TF nasce sem `DBA`, com acessos liberados conforme a necessidade ([ADR 0010](decisoes/0010-tf-sem-a-role-dba.md)).
 - **2026-11-10 (4):** decisões passadas para os ADRs: [ADR 0005](decisoes/0005-importar-so-o-owner-tf.md) a [ADR 0009](decisoes/0009-jri-le-pelo-apexrep-vazio-e-so-de-leitura.md).
 - **2026-11-10 (3):** Tiago decidiu manter o `APEXREP`, vazio e só de leitura, com o grant de schema (script da §4 ativado). Pacote `TF_PCK_AUTENTICACAO_E` do ADB salvo; ADB `DEVDOLOMITI` encerrado e dump do bucket apagado.

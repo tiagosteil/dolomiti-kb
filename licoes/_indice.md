@@ -12,6 +12,7 @@ Passou do limite: consolidar lições parecidas, promover as maduras para o `CLA
 
 ## Oracle
 
+- **No Free, todo datafile da PDB nasce com teto, menos SYSTEM e SYSAUX (undo 2 GB, USERS e auditoria 1 GB), com `undo_retention` 900 sem garantia, e alerta acima de 9 GB** — acima de 12 GB a PDB não abre em nenhum modo (`ORA-12954`); os tetos ficam no [`pos-instalacao.sql`](../compose/banco/pos-instalacao.sql) — [lição](2026-11-24-free-pdb-nao-abre-acima-de-12-gb.md) (2026-11-24, uc-local-apex-dev)
 - **Antes de levar código do 11g para o 21c ou mais novo, procurar no `dba_source` os recursos removidos (`dbms_obfuscation_toolkit`, `wm_concat`) e tratar cada um antes do import; senha só com `DBMS_CRYPTO` e salt por usuário, nunca `APEX_UTIL.GET_HASH`** — [lição](2026-11-10-recursos-removidos-no-21c.md) (2026-11-10)
 
 ## Docker

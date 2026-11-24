@@ -331,7 +331,7 @@ Na produção, usar as mesmas imagens oficiais da Oracle, com compose próprio:
 | Dados | Volume Docker | Block volume dedicado em `/opt/oracle/oradata`, com política de backup |
 | Reinício | `restart: no` | Subida automática com a VM |
 | Imagens | Baixadas do registro da Oracle | Tag fixa e cópia no OCI Container Registry, para não depender de terceiros na reconstrução |
-| Espaço | Limite de tablespaces (`cap-tablespaces`) | Manter a ideia e **alertar a partir de 9 GB** |
+| Espaço | Limite de tablespaces (`cap-tablespaces`) | Manter a ideia, já no [`pos-instalacao.sql`](compose/banco/pos-instalacao.sql), e **alertar a partir de 9 GB** ([lição](licoes/2026-11-24-free-pdb-nao-abre-acima-de-12-gb.md)) |
 | Monitoramento | Nenhum | Alertas de VM, disco, banco, certificado e falha de backup |
 
 O backup de volume copia o disco num instante. Com o banco ligado, a cópia volta como depois de uma queda de energia: o Oracle costuma se recuperar, desde que datafiles, redo e controlfiles fiquem no mesmo volume. Ele acelera a reconstrução da VM, mas o RMAN continua sendo o backup do banco.
@@ -557,6 +557,7 @@ Consultadas de 2026-11-03 a 2026-11-05.
 
 ## Changelog
 
+- **2026-11-24 (2):** compose do dev e da produção em [compose/](compose/README.md); tetos de datafile no `pos-instalacao.sql` ([lição](licoes/2026-11-24-free-pdb-nao-abre-acima-de-12-gb.md)).
 - **2026-11-24:** o upgrade da conta passou para antes da VM de dev (passo 3 da montagem), por causa do recolhimento de A1 ociosa e da capacidade em conta Free Tier. O NSG ganhou uma regra 22 por lugar (casa e escritório). Com o console da OCI fora do ar nos menus, a chave SSH do passo 6 foi adiantada.
 - **2026-11-10 (6):** SSH da VM de dev pelo NSG da VM, com as security lists fechadas ([ADR 0011](decisoes/0011-nsg-por-vm-e-security-list-fechada.md)). O passo 3 da montagem mudou, e entrou o passo 4 (limpar as security lists).
 - **2026-11-10 (5):** lição de OCI incorporada ([lição](licoes/2026-09-16-conta-oci-paga-e-franquia-a1.md)): o recolhimento por ociosidade só vale em conta Free Tier, e o upgrade exige cartão físico.
