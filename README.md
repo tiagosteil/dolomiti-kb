@@ -18,6 +18,7 @@ Documentação viva do sistema (ERP **Oracle + APEX**, multitenant). Use este í
 - [analise-integracao-nfse.md](analise-integracao-nfse.md) — NFS-e: API nacional (Sefin) × intermediário (Spedy), custos e precificação, recomendação e itens em aberto
 
 ## Infraestrutura
+- [compose/](compose/README.md) — compose do banco (Oracle Free 26ai) e da aplicação (ORDS), o mesmo no dev e na produção, com o script de pós-instalação do banco
 - [proxy-reverso.md](proxy-reverso.md) — proxy reverso da produção: node4ords (entrada), suez (saída e mTLS do Sicoob), troca de certificado, diagnóstico e substituição pelo nginx na OCI
 
 ## Site

@@ -54,6 +54,7 @@ Lição que não muda comportamento é diário, não lição. Registre a **regra
 | `decisoes/` | ADRs numerados: o *porquê* de cada escolha |
 | `runbooks/` | Procedimentos repetíveis |
 | `licoes/` | Lições; `_indice.md` é carregado em toda sessão |
+| `compose/` | Compose do banco e da aplicação, o mesmo no dev e na produção; senhas e IPs só no `.env` da VM, nunca aqui |
 | `scripts/seguranca/` | Verificação de segredos, usada pelo hook do Claude Code e pelo pre-commit do git |
 | `.claude/` | Hooks (segredos e cobrança de commit) e skills do projeto |
 

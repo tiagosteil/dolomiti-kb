@@ -1,0 +1,26 @@
+# Aplicação: ORDS com as imagens do APEX (ADR 0001).
+# O nginx (ADR 0004) e o Tomcat do JRI rodam no host, fora deste compose.
+# Mesmo arquivo no dev e na produção (ADR 0003); a diferença fica só no .env.
+name: dolomiti-aplicacao
+
+services:
+  ords:
+    image: container-registry.oracle.com/database/ords:26.3.1
+    container_name: dolomiti-ords
+    restart: unless-stopped
+    env_file: .env                       # ORACLE_PWD e ORACLE_USER_PWD; não versionado
+    environment:
+      TZ: America/Sao_Paulo
+      # Na primeira subida, a imagem instala o ORDS no banco conectando como SYS.
+      DBHOST: ${IP_BANCO}                # IP privado da VM banco; nunca localhost
+      DBPORT: "1521"
+      DBSERVICENAME: FREEPDB1
+      DEBUG: "false"                     # a imagem traduz para debug.printDebugToScreen
+    ports:
+      # Só em 127.0.0.1: quem fala com a internet é o nginx do host.
+      - "127.0.0.1:8181:8080"
+    volumes:
+      - /opt/dolomiti/ords/config:/etc/ords/config
+      # Imagens do APEX (/i/), copiadas do zip da versão instalada. O nginx pode
+      # servir a mesma pasta direto.
+      - /opt/dolomiti/apex/images:/opt/oracle/apex/images
