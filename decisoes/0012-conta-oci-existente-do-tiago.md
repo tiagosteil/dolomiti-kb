@@ -13,7 +13,7 @@ O Tiago tem uma conta Free Tier aberta em 2019-11-29 com o e-mail pessoal dele, 
 
 O §10 da análise pedia que a nota fiscal saísse com o CNPJ da Dolomiti e que o titular fosse conferido antes do upgrade. Segundo a FAQ de faturamento da Oracle, depois do upgrade qualquer mudança nesses dados passa pelo Suporte de Faturamento.
 
-No upgrade, pedido em 2026-11-27, o cadastro de cobrança perguntou só nome e endereço, e foram usados os do Tiago. O pagamento é feito com o cartão virtual da empresa.
+No upgrade, pedido em 2026-11-27, o cadastro de cobrança perguntou só nome e endereço, e foram usados os do Tiago. O pagamento é feito com o cartão virtual da empresa. A Oracle aprovou em 2026-11-28 como *individual account*, ou seja, conta de pessoa física.
 
 ## Opções consideradas
 

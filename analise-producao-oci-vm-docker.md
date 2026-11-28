@@ -179,7 +179,7 @@ Premissas: preços de lista em BRL da [API do Cost Estimator](https://apexapps.o
 
 **Cuidados:**
 
-- ✅ **Home region:** São Paulo, confirmada por Tiago em 2026-11-05. A franquia de disco e a A1 grátis só valem nela. A conta ainda é Free Tier e precisa do upgrade para Pay As You Go antes de criar as VMs E4 (§10).
+- ✅ **Home region:** São Paulo, confirmada por Tiago em 2026-11-05. A franquia de disco e a A1 grátis só valem nela. A conta passou para Pay As You Go em 2026-11-28 (§10).
 - **Backup das VMs:** a franquia inclui [5 backups de volume](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm), somando boot e bloco. Acima disso, o armazenamento é cobrado e não está no total; medir na primeira fatura.
 - **Impostos:** a conta empata com os R$ 370 de hoje se os impostos somarem ~34%.
 - **WAF:** se decidirem usar, não está incluído.
@@ -302,7 +302,7 @@ Escolhas (2026-11-10):
 |---|---|---|
 | 1 | Compartimentos `dolomiti-dev` e `dolomiti-prod` | ✅ 2026-11-10 |
 | 2 | VCN `vcn-dev` pelo assistente *Create VCN with Internet Connectivity*, com subnets pública e privada | ✅ 2026-11-10 |
-| 3 | Upgrade da conta para Pay As You Go, com cartão de crédito físico internacional, e logo depois o alerta de orçamento (§10). A conta é a que o Tiago já tinha ([ADR 0012](decisoes/0012-conta-oci-existente-do-tiago.md)) | ⏳ **Pedido em 2026-11-27**, à espera do e-mail de confirmação. Feito com o cartão virtual da empresa. Falta o alerta de orçamento |
+| 3 | Upgrade da conta para Pay As You Go, com cartão de crédito físico internacional, e logo depois o alerta de orçamento (§10). A conta é a que o Tiago já tinha ([ADR 0012](decisoes/0012-conta-oci-existente-do-tiago.md)) | ⏸️ Upgrade ✅ 2026-11-28 (pedido em 2026-11-27, com o cartão virtual da empresa). **Falta o alerta de orçamento** |
 | 4 | NSG `nsg-vm-dev` na `vcn-dev`, com uma regra de entrada TCP 22 por lugar (casa e escritório), cada uma com o IP `/32` | Pendente. Conferir o IP de cada lugar com `curl -4 ifconfig.me` |
 | 5 | Nas security lists da `vcn-dev` (a padrão, da subnet pública, e a da privada), apagar as regras de entrada de portas, como a 22. Ficam só ICMP e a saída | Pendente |
 | 6 | VM `vm-dev`: A1.Flex com 2 OCPU e 12 GB, Ubuntu 24.04, subnet pública com IPv4 público, NSG `nsg-vm-dev`, chave SSH ed25519 e boot de 50 GB | Pendente. A chave do Tiago (`~/.ssh/dolomiti`, ed25519) foi criada em 2026-11-24 |
@@ -485,7 +485,7 @@ Conta OCI, antes de criar as VMs de produção:
 
 - [x] Titular e dados de cobrança: fica a conta que o Tiago abriu em 2019, com os dados de cobrança dele ([ADR 0012](decisoes/0012-conta-oci-existente-do-tiago.md), proposta em 2026-11-27).
 - [ ] Antes da produção: criar um usuário administrador para o Chico, com MFA, e mandar os alertas de orçamento também para um e-mail da empresa ([ADR 0012](decisoes/0012-conta-oci-existente-do-tiago.md)).
-- [ ] Fazer o upgrade para Pay As You Go pelo [link **Upgrade** no banner do console](https://docs.oracle.com/iaas/Content/FreeTier/freetier.htm). Guias de terceiros indicam também *Billing & Cost Management* → *Upgrade and Manage Payment*, alguns dias de espera e um e-mail de confirmação. Cadastrar o cartão de crédito **físico** da empresa, habilitado para compras internacionais: cartão virtual ou pré-pago é recusado e pode levar ao encerramento da conta ([lição](licoes/2026-09-16-conta-oci-paga-e-franquia-a1.md)).
+- [x] Upgrade para Pay As You Go por *Billing & Cost Management* → *Upgrade and Manage Payment*: pedido em 2026-11-27 e aprovado em 2026-11-28 como *individual account*, com o cartão virtual da empresa ([lição](licoes/2026-09-16-conta-oci-paga-e-franquia-a1.md)).
 - [ ] Depois do upgrade, conferir que a VM A1 e os discos continuam grátis: a Oracle não cobra os recursos Always Free, só o que passa da franquia.
 - [ ] Criar um orçamento (*Budgets*) com alertas, por exemplo em R$ 300 e R$ 400/mês, para pegar cobrança inesperada no mesmo mês.
 - [ ] Ativar MFA no usuário administrador e criar compartimentos separados para produção e desenvolvimento.
@@ -558,6 +558,7 @@ Consultadas de 2026-11-03 a 2026-11-05.
 
 ## Changelog
 
+- **2026-11-28:** upgrade da conta para Pay As You Go aprovado (*individual account*), com o cartão virtual da empresa. A lição do cartão foi ajustada.
 - **2026-11-27:** upgrade da conta pedido (passo 3), com o cartão virtual da empresa; *upgrade in progress* até o e-mail da Oracle. A conta da Dolomiti é a que o Tiago já tinha, com os dados de cobrança dele ([ADR 0012](decisoes/0012-conta-oci-existente-do-tiago.md), proposta).
 - **2026-11-24 (2):** compose do dev e da produção em [compose/](compose/README.md); tetos de datafile no `pos-instalacao.sql` ([lição](licoes/2026-11-24-free-pdb-nao-abre-acima-de-12-gb.md)).
 - **2026-11-24:** o upgrade da conta passou para antes da VM de dev (passo 3 da montagem), por causa do recolhimento de A1 ociosa e da capacidade em conta Free Tier. O NSG ganhou uma regra 22 por lugar (casa e escritório). Com o console da OCI fora do ar nos menus, a chave SSH do passo 6 foi adiantada.
